@@ -5,6 +5,7 @@ const QReaderScanner = () => {
   const [scanning, setScanning] = useState(true); // To control the scanning status
   const [qrPosition, setQrPosition] = useState(null); // Store position of the QR code
   const [batchNumber, setBatchNumber] = useState(""); // State to store the batch number
+  const [facingMode, setFacingMode] = useState("user"); // Default to user-facing camera (front camera)
   const videoRef = useRef(null); // Ref to control the video element size dynamically
 
   const ignoredUrl = "https://scinovas.in/m"; // The URL to ignore
@@ -38,6 +39,14 @@ const QReaderScanner = () => {
   const handleBatchNumberChange = (e) => {
     setBatchNumber(e.target.value); // Update the batch number as user types
   };
+
+  // Update facingMode to back camera on mobile devices
+  useEffect(() => {
+    if (window.innerWidth <= 768) {
+      // If on mobile device, use the back camera (environment camera)
+      setFacingMode("environment");
+    }
+  }, []);
 
   useEffect(() => {
     if (qrPosition && videoRef.current) {
@@ -73,7 +82,7 @@ const QReaderScanner = () => {
         {scanning ? (
           <ReactQRScanner
             delay={300}
-            facingMode="environment"
+            facingMode={facingMode} // Dynamically set facingMode (back camera on mobile)
             onError={handleError}
             onScan={handleScan}
             style={{
