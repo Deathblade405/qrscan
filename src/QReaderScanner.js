@@ -1,12 +1,10 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import ReactQRScanner from "react-qr-scanner";
 
 const QReaderScanner = () => {
   const [scanning, setScanning] = useState(true); // To control the scanning status
   const [qrPosition, setQrPosition] = useState(null); // Store position of the QR code
   const [batchNumber, setBatchNumber] = useState(""); // State to store the batch number
-  const [facingMode, setFacingMode] = useState("user"); // Default to user-facing camera (front camera)
-  const videoRef = useRef(null); // Ref to control the video element size dynamically
 
   const ignoredUrl = "https://scinovas.in/m"; // The URL to ignore
 
@@ -40,26 +38,6 @@ const QReaderScanner = () => {
     setBatchNumber(e.target.value); // Update the batch number as user types
   };
 
-  // Update facingMode to back camera on mobile devices
-  useEffect(() => {
-    if (window.innerWidth <= 768) {
-      // If on mobile device, use the back camera (environment camera)
-      setFacingMode("environment");
-    }
-  }, []);
-
-  useEffect(() => {
-    if (qrPosition && videoRef.current) {
-      // Dynamically adjust the video element's zooming by changing its scale based on the position
-      const videoElement = videoRef.current;
-      videoElement.style.transform = `scale(1.5)`; // Increase zoom level (1.5x zoom in)
-
-      // Optionally, you can also adjust the position of the video element itself
-      // to zoom into the detected QR area more precisely.
-      videoElement.style.transformOrigin = `${qrPosition.x * 100}% ${qrPosition.y * 100}%`;
-    }
-  }, [qrPosition]);
-
   return (
     <div className="qr-scanner-container">
       <h1>QR Code Scanner</h1>
@@ -82,7 +60,6 @@ const QReaderScanner = () => {
         {scanning ? (
           <ReactQRScanner
             delay={300}
-            facingMode={facingMode} // Dynamically set facingMode (back camera on mobile)
             onError={handleError}
             onScan={handleScan}
             style={{
@@ -90,7 +67,9 @@ const QReaderScanner = () => {
               height: "100%",
               objectFit: "cover",
             }}
-            videoRef={videoRef} // Attach video ref to the video element
+            constraints={{
+              video: { facingMode: { exact: "environment" } }, // Use the back camera
+            }}
           />
         ) : (
           <div className="redirecting-message">
