@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactQRScanner from "react-qr-scanner";
 
 const QReaderScanner = () => {
   const [scanning, setScanning] = useState(true); // To control the scanning status
   const [qrPosition, setQrPosition] = useState(null); // Store position of the QR code
   const [batchNumber, setBatchNumber] = useState(""); // State to store the batch number
+  const [flashlight, setFlashlight] = useState(false); // Flashlight toggle state
+  const [videoTrack, setVideoTrack] = useState(null); // Current video track
 
   const ignoredUrl = "https://scinovas.in/m"; // The URL to ignore
 
@@ -37,6 +39,37 @@ const QReaderScanner = () => {
   const handleBatchNumberChange = (e) => {
     setBatchNumber(e.target.value); // Update the batch number as user types
   };
+
+  const toggleFlashlight = async () => {
+    if (videoTrack) {
+      const capabilities = videoTrack.getCapabilities();
+      if (capabilities.torch) {
+        await videoTrack.applyConstraints({
+          advanced: [{ torch: !flashlight }], // Toggle torch
+        });
+        setFlashlight(!flashlight);
+      } else {
+        console.log("Torch is not supported on this device.");
+      }
+    }
+  };
+
+  // Access the back camera and manage the flashlight
+  useEffect(() => {
+    navigator.mediaDevices
+      .getUserMedia({ video: { facingMode: { exact: "environment" } } })
+      .then((stream) => {
+        const track = stream.getVideoTracks()[0];
+        setVideoTrack(track);
+      })
+      .catch((err) => {
+        console.error("Error accessing back camera:", err);
+      });
+
+    return () => {
+      if (videoTrack) videoTrack.stop(); // Clean up the video track on component unmount
+    };
+  }, [videoTrack]);
 
   return (
     <div className="qr-scanner-container">
@@ -89,6 +122,15 @@ const QReaderScanner = () => {
             }}
           ></div>
         )}
+      </div>
+
+      {/* Flashlight toggle button */}
+      <div className="flashlight-container">
+        <button className="flashlight-button" onClick={toggleFlashlight}>
+          <span className="torch-icon">
+            {flashlight ? "🔦" : "💡"}
+          </span>
+        </button>
       </div>
     </div>
   );
