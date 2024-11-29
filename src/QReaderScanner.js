@@ -7,6 +7,8 @@ const QReaderScanner = () => {
   const [batchNumber, setBatchNumber] = useState(""); // State to store the batch number
   const [flashlight, setFlashlight] = useState(false); // Flashlight toggle state
   const [videoTrack, setVideoTrack] = useState(null); // Current video track
+  const [isMobile, setIsMobile] = useState(false); // Check if the user is on mobile
+  const [isCameraReady, setIsCameraReady] = useState(false); // To manage when the camera is ready
 
   const ignoredUrl = "https://scinovas.in/m"; // The URL to ignore
 
@@ -58,20 +60,45 @@ const QReaderScanner = () => {
     }
   };
 
-  // Access the back camera and manage the flashlight
-  useEffect(() => {
-    const getCameraStream = async () => {
-      try {
+  // Function to get the back camera for mobile and webcam for desktop
+  const getCameraStream = async () => {
+    try {
+      if (isMobile) {
+        // On mobile, use the back camera
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment" }, // Use the back camera
+          video: { facingMode: "environment" }, // Back camera on mobile
         });
         const track = stream.getVideoTracks()[0];
         setVideoTrack(track);
-      } catch (err) {
-        console.error("Error accessing back camera:", err);
+        setIsCameraReady(true);
+      } else {
+        // On desktop, use the webcam
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true, // Webcam on desktop
+        });
+        const track = stream.getVideoTracks()[0];
+        setVideoTrack(track);
+        setIsCameraReady(true);
       }
-    };
+    } catch (err) {
+      console.error("Error accessing camera:", err);
+    }
+  };
 
+  // Check if the user is on a mobile device
+  const checkIfMobile = () => {
+    const userAgent = navigator.userAgent.toLowerCase();
+    const mobileDevices = [
+      "iphone", "ipod", "ipad", "android", "blackberry", "windows phone",
+    ];
+    setIsMobile(mobileDevices.some(device => userAgent.includes(device)));
+  };
+
+  useEffect(() => {
+    // Check if the device is mobile
+    checkIfMobile();
+
+    // Get camera stream based on device type
     getCameraStream();
 
     return () => {
@@ -79,7 +106,7 @@ const QReaderScanner = () => {
         videoTrack.stop(); // Stop the video track when the component unmounts
       }
     };
-  }, [videoTrack]);
+  }, [isMobile]);
 
   return (
     <div className="qr-scanner-container">
@@ -100,7 +127,7 @@ const QReaderScanner = () => {
         {/* Horizontal scanning line */}
         <div className="scanning-line"></div>
 
-        {scanning ? (
+        {scanning && isCameraReady ? (
           <ReactQRScanner
             delay={300}
             onError={handleError}
@@ -111,7 +138,9 @@ const QReaderScanner = () => {
               objectFit: "cover",
             }}
             constraints={{
-              video: { facingMode: "environment" }, // Use the back camera
+              video: isMobile
+                ? { facingMode: "environment" } // For mobile: back camera
+                : true, // For desktop: webcam
             }}
           />
         ) : (
