@@ -38,6 +38,29 @@ const QReaderScanner = () => {
     setBatchNumber(e.target.value); // Update the batch number as user types
   };
 
+  // Function to create video constraints to request 1080p resolution
+  const getVideoConstraints = () => {
+    return {
+      video: {
+        facingMode: { exact: "environment" }, // Use back camera
+        width: { ideal: 1920 }, // 1080p width
+        height: { ideal: 1080 }, // 1080p height
+      },
+    };
+  };
+
+  // Function to simulate zoom effect by adjusting scale based on QR position
+  const calculateZoomStyle = () => {
+    if (qrPosition) {
+      const scale = Math.max(1, Math.min(2, 2 - qrPosition.width / 100)); // Scale between 1x and 2x based on QR width
+      return {
+        transform: `scale(${scale})`,
+        transformOrigin: "center center", // Make sure the zoom is centered on the QR code
+      };
+    }
+    return {};
+  };
+
   return (
     <div className="qr-scanner-container">
       <h1>QR Code Scanner</h1>
@@ -53,7 +76,7 @@ const QReaderScanner = () => {
       </div>
 
       {/* QR Scanner Box */}
-      <div className="scanner-box">
+      <div className="scanner-box" style={calculateZoomStyle()}>
         {/* Horizontal scanning line */}
         <div className="scanning-line"></div>
 
@@ -67,9 +90,7 @@ const QReaderScanner = () => {
               height: "100%",
               objectFit: "cover",
             }}
-            constraints={{
-              video: { facingMode: { exact: "environment" } }, // Use the back camera
-            }}
+            constraints={getVideoConstraints()} // Apply 1080p video constraints
           />
         ) : (
           <div className="redirecting-message">
