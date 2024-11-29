@@ -53,23 +53,6 @@ const QReaderScanner = () => {
     checkIfMobile();
   }, []);
 
-  // Access the camera dynamically
-  const getVideoConstraints = () => {
-    if (isMobile) {
-      return {
-        video: {
-          facingMode: "environment", // Use back camera on mobile devices
-        },
-      };
-    } else {
-      return {
-        video: {
-          facingMode: "user", // Use front camera or default webcam on desktops
-        },
-      };
-    }
-  };
-
   return (
     <div className="qr-scanner-container">
       <h1>QR Code Scanner</h1>
@@ -99,7 +82,11 @@ const QReaderScanner = () => {
               height: "100%",
               objectFit: "cover",
             }}
-            constraints={getVideoConstraints()} // Apply dynamic video constraints
+            constraints={{
+              video: {
+                facingMode: isMobile ? "environment" : "user", // Mobile: back camera, Desktop: webcam
+              },
+            }}
           />
         ) : (
           <div className="redirecting-message">
