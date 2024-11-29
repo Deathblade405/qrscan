@@ -44,10 +44,14 @@ const QReaderScanner = () => {
     if (videoTrack) {
       const capabilities = videoTrack.getCapabilities();
       if (capabilities.torch) {
-        await videoTrack.applyConstraints({
-          advanced: [{ torch: !flashlight }], // Toggle torch
-        });
-        setFlashlight(!flashlight);
+        try {
+          await videoTrack.applyConstraints({
+            advanced: [{ torch: !flashlight }], // Toggle torch
+          });
+          setFlashlight(!flashlight);
+        } catch (err) {
+          console.error("Error toggling flashlight:", err);
+        }
       } else {
         console.log("Torch is not supported on this device.");
       }
@@ -56,18 +60,24 @@ const QReaderScanner = () => {
 
   // Access the back camera and manage the flashlight
   useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({ video: { facingMode: { exact: "environment" } } })
-      .then((stream) => {
+    const getCameraStream = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" }, // Use the back camera
+        });
         const track = stream.getVideoTracks()[0];
         setVideoTrack(track);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Error accessing back camera:", err);
-      });
+      }
+    };
+
+    getCameraStream();
 
     return () => {
-      if (videoTrack) videoTrack.stop(); // Clean up the video track on component unmount
+      if (videoTrack) {
+        videoTrack.stop(); // Stop the video track when the component unmounts
+      }
     };
   }, [videoTrack]);
 
@@ -101,7 +111,7 @@ const QReaderScanner = () => {
               objectFit: "cover",
             }}
             constraints={{
-              video: { facingMode: { exact: "environment" } }, // Use the back camera
+              video: { facingMode: "environment" }, // Use the back camera
             }}
           />
         ) : (
