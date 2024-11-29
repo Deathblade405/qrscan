@@ -1,214 +1,153 @@
 /* Global Styling */
 body {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(45deg, #2c3e50, #34495e); /* Dark gradient */
   margin: 0;
   padding: 0;
-  font-family: 'Roboto', sans-serif;
-  background: linear-gradient(135deg, #1b2838, #233142); /* Dark gradient */
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  color: #ffffff;
+  height: 100vh;
   overflow: hidden;
 }
 
-/* QR Scanner Container */
 .qr-scanner-container {
   position: relative;
-  width: 90%; /* Better responsiveness */
-  max-width: 420px; /* Fixed width for larger screens */
-  background: #2a3b4d; /* Card-like dark background */
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  width: 100%;
+  max-width: 500px;
+  background: #1a242f; /* Dark container background */
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
   text-align: center;
+  color: #fff; /* Text color */
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  box-sizing: border-box;
 }
 
 /* Header Styling */
-.qr-scanner-container h1 {
-  font-size: 22px;
-  margin-bottom: 15px;
-  color: #ffffff;
-  font-weight: 600;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+h1 {
+  color: #ecf0f1; /* Soft white color */
+  font-size: 26px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Batch Number Input Container */
+/* Batch Number Input Styling */
 .batch-input-container {
-  width: 100%; /* Full width container for better alignment */
-  margin: 15px 0;
-  display: flex;
-  justify-content: center;
+  margin: 20px 0;
 }
 
-.batch-input-container input {
-  padding: 12px 15px;
+input[type="text"] {
+  padding: 14px;
+  width: 100%;
+  max-width: 300px;
   font-size: 16px;
   border-radius: 8px;
-  border: none;
-  background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent */
-  color: #ffffff;
-  text-align: center;
-  width: 100%; /* Ensure input fits container */
-  max-width: 300px; /* Limits width on larger screens */
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 1px solid #2ecc71; /* Green border */
+  margin: 10px 0;
   outline: none;
+  box-sizing: border-box;
+  background-color: #2d3e50; /* Input background */
+  color: #fff;
   transition: all 0.3s ease;
 }
 
-.batch-input-container input:focus {
-  border: 2px solid #42a5f5; /* Blue border */
-  box-shadow: 0px 0px 10px rgba(66, 165, 245, 0.8);
+input[type="text"]:focus {
+  border-color: #3498db; /* Blue border on focus */
+  box-shadow: 0 0 8px rgba(52, 152, 219, 0.7);
 }
 
-.batch-input-container input::placeholder {
-  color: #bdc3c7;
+input[type="text"]::placeholder {
+  color: #bdc3c7; /* Lighter placeholder text */
 }
 
-/* Scanner Box */
+/* Scanner Box Styling */
 .scanner-box {
   position: relative;
+  margin: 20px auto;
+  border: 6px solid #4caf50; /* Vibrant Green border */
   width: 100%;
-  max-width: 350px;
-  height: 320px;
-  margin: 20px 0;
+  max-width: 400px;
+  height: 300px;
   border-radius: 12px;
-  background: rgba(0, 0, 0, 0.5); /* Semi-transparent dark background */
   overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 4px solid rgba(255, 255, 255, 0.1); /* Soft border for elegance */
-  box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.5); /* Darker overlay inside */
+  position: relative;
 }
 
-/* Scanner Frame Styling */
-.scanner-frame {
-  position: absolute;
-  width: 85%;
-  height: 85%;
-  border: 4px solid rgba(255, 255, 255, 0.8); /* Bright circular frame */
-  border-radius: 50%;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-  pointer-events: none;
-}
-
-/* Scanning Line */
+/* Horizontal Scanning Line Animation (Up and Down) */
 .scanning-line {
   position: absolute;
-  width: 80%;
-  height: 4px;
-  background: linear-gradient(to right, #42a5f5, #00e676);
-  border-radius: 2px;
-  animation: scanning 2.5s linear infinite;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: #4caf50; /* Vibrant Green color */
+  animation: scanAnimationUpDown 2s infinite linear;
 }
 
-@keyframes scanning {
+/* Up and Down Animation for Scanning Line */
+@keyframes scanAnimationUpDown {
   0% {
-    top: 0;
-    opacity: 0.4;
+    top: 0%;
   }
   50% {
-    top: 50%;
-    opacity: 1;
+    top: 50%; /* Moves to center */
   }
   100% {
-    top: 100%;
-    opacity: 0.4;
+    top: 100%; /* Moves to bottom */
   }
 }
 
-/* QR Code Highlight */
+/* Scanner State Text */
+.scanner-state {
+  font-size: 16px;
+  color: #3498db; /* Light Blue for status */
+  font-weight: bold;
+  margin-top: 15px;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Message that shows when redirecting */
+.redirecting-message {
+  color: #f39c12; /* Yellow color for redirection */
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+/* QR Box Highlight Styling */
 .qr-box-highlight {
   position: absolute;
-  border: 3px solid #4caf50;
-  box-shadow: 0px 0px 8px rgba(76, 175, 80, 0.8);
-  animation: pulsate 1.5s ease-in-out infinite;
+  border: 3px solid red; /* Red highlight border */
   pointer-events: none;
+  animation: highlightBox 1s ease-in-out infinite;
 }
 
-@keyframes pulsate {
+/* Highlighting animation */
+@keyframes highlightBox {
   0% {
-    transform: scale(1);
     opacity: 0.8;
   }
   50% {
-    transform: scale(1.1);
-    opacity: 1;
+    opacity: 0.5;
   }
   100% {
-    transform: scale(1);
     opacity: 0.8;
   }
 }
 
-/* Flashlight Button (Visible Only on Mobile) */
-.flashlight-container {
-  margin-top: 15px;
-  display: none; /* Default hidden */
-  justify-content: center;
-}
-
-.flashlight-button {
-  background: #2ecc71;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
+/* Centered Scanner Container */
+.qr-scanner-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-size: 18px;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.4);
-  transition: transform 0.3s, box-shadow 0.3s;
-  -webkit-tap-highlight-color: transparent; /* Prevent highlight on mobile */
 }
 
-.flashlight-button:focus {
-  outline: none; /* Remove the default focus outline */
-}
-
-.flashlight-button:active {
-  background-color: transparent; /* Prevent background change when active */
-}
-
-.flashlight-button:hover {
-  transform: scale(1.1);
-  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.6);
-}
-
-/* Redirecting Message */
-.redirecting-message {
-  margin-top: 15px;
-  color: #f39c12;
-  font-size: 16px;
-  font-weight: bold;
-  text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* Responsive Design for Mobile */
-@media (max-width: 768px) {
-  .qr-scanner-container {
-    width: 90%;
-    padding: 15px;
-  }
-
-  .scanner-box {
-    height: 300px;
-  }
-
-  .flashlight-container {
-    display: flex; /* Enable flashlight button for mobile */
-  }
-
-  .batch-input-container input {
-    width: 100%;
-    font-size: 14px;
-  }
+/* Scanning Button Removed as per Requirement */
+.scan-attempt-button {
+  display: none;
 }
