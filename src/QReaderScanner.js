@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ReactQRScanner from "react-qr-scanner";
 
 const QReaderScanner = () => {
   const [scanning, setScanning] = useState(true); // To control the scanning status
   const [qrPosition, setQrPosition] = useState(null); // Store position of the QR code
   const [batchNumber, setBatchNumber] = useState(""); // State to store the batch number
-  const [isMobile, setIsMobile] = useState(false); // Check if the user is on a mobile device
 
   const ignoredUrl = "https://scinovas.in/m"; // The URL to ignore
 
@@ -39,20 +38,6 @@ const QReaderScanner = () => {
     setBatchNumber(e.target.value); // Update the batch number as user types
   };
 
-  // Check if the user is on a mobile device
-  const checkIfMobile = () => {
-    const userAgent = navigator.userAgent.toLowerCase();
-    const mobileDevices = [
-      "iphone", "ipod", "ipad", "android", "blackberry", "windows phone",
-    ];
-    setIsMobile(mobileDevices.some(device => userAgent.includes(device)));
-  };
-
-  // Effect to determine if the device is mobile or not
-  useEffect(() => {
-    checkIfMobile();
-  }, []);
-
   return (
     <div className="qr-scanner-container">
       <h1>QR Code Scanner</h1>
@@ -83,9 +68,7 @@ const QReaderScanner = () => {
               objectFit: "cover",
             }}
             constraints={{
-              video: {
-                facingMode: isMobile ? "environment" : "user", // Mobile: back camera, Desktop: webcam
-              },
+              video: { facingMode: { exact: "environment" } }, // Use the back camera
             }}
           />
         ) : (
